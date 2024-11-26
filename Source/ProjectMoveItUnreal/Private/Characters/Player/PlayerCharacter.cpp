@@ -3,25 +3,17 @@
 
 #include "Characters/Player/PlayerCharacter.h"
 
-
-
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
-	SpringArm = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
+	
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
+	Camera->SetupAttachment(RootComponent);
 
-	SpringArm->SetupAttachment(RootComponent);
-	Camera->SetupAttachment(SpringArm);
-
-	SpringArm->bInheritPitch = true;
-	SpringArm->bInheritRoll = false;
-	SpringArm->bInheritYaw = true;
-
-	SpringArm->TargetArmLength = 0.0f;
-	SpringArm->SetRelativeLocation(FVector(0.0f, 0.0f, SpringArmHeight));
+	Camera->bUsePawnControlRotation = true;
+	
+	Camera->SetRelativeLocation(FVector(0.0f, 0.0f, SpringArmHeight));
 }
 
 void APlayerCharacter::BeginPlay()
@@ -35,11 +27,38 @@ void APlayerCharacter::BeginPlay()
 			Subsystem->AddMappingContext(InputContext, 0);
 		}
 	}
+	OriginalCameraPosition = Camera->GetRelativeLocation();
 }
+
+
 
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	//how performant is this?
+	if (bInterpCrouch)
+	{
+		// Current height
+		float CurrentHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+        
+		// Interpolate height
+		float NewHeight = FMath::FInterpTo(
+			CurrentHeight, 
+			TargetCapsuleHalfHeight, 
+			DeltaTime, 
+			CrouchInterpSpeed
+		);
+
+		// Update capsule height
+		GetCapsuleComponent()->SetCapsuleHalfHeight(NewHeight);
+
+		// Check if we've reached the target height
+		if (FMath::IsNearlyEqual(NewHeight, TargetCapsuleHalfHeight, 1.0f))
+		{
+			bInterpCrouch = false;
+		}
+	}
 
 }
 
@@ -52,7 +71,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(MoveRightInput, ETriggerEvent::Triggered, this, &APlayerCharacter::MoveRight);
 		EnhancedInputComponent->BindAction(LookInput, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
 		EnhancedInputComponent->BindAction(JumpInput, ETriggerEvent::Triggered, this, &APlayerCharacter::Jump);
-		EnhancedInputComponent->BindAction(CrouchInput, ETriggerEvent::Triggered, this, &APlayerCharacter::Crouch);
+		EnhancedInputComponent->BindAction(CrouchInput, ETriggerEvent::Triggered, this, &APlayerCharacter::CrouchAction);
 	}
 }
 
@@ -102,29 +121,39 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
 		AddControllerPitchInput(-InputVector.Y);
 	}
 }
+#pragma region  Crouching
 
-void APlayerCharacter::Crouch(const FInputActionValue& Value)
+void APlayerCharacter::CrouchAction(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Trying to Crouch"));
 	bIsCrouching = !bIsCrouching;
 	if(bIsCrouching)
 	{
 		GetCharacterMovement()->bWantsToCrouch = true;
-		GetCharacterMovement()->Crouch();
-		ResetCameraPosition();
-		UE_LOG(LogTemp, Warning, TEXT("Crouched"));
+		Crouch();
 	}
-	else if(!bIsCrouching)
+	else
 	{
 		GetCharacterMovement()->bWantsToCrouch = false;
-		GetCharacterMovement()->UnCrouch();
-		ResetCameraPosition();
-		UE_LOG(LogTemp, Warning, TEXT("Stood up"));
+		UnCrouch();
 	}
 }
 
-void APlayerCharacter::ResetCameraPosition()
+void APlayerCharacter::Crouch(bool bClientSimulation)
 {
-	FVector NewCameraPosition = FMath::Lerp(Camera->GetRelativeLocation(), OriginalCameraPosition, CameraResetLerpTime);
-	Camera->SetRelativeLocation(NewCameraPosition);
+	Super::Crouch(bClientSimulation);
+	bInterpCrouch = true;
+	TargetCapsuleHalfHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight() * 0.5f;
+	// Optional: Reduce movement speed
+	GetCharacterMovement()->MaxWalkSpeed *= 0.5f;
 }
+
+void APlayerCharacter::UnCrouch(bool bClientSimulation)
+{
+	Super::UnCrouch(bClientSimulation);
+	bInterpCrouch = true;
+	TargetCapsuleHalfHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight() * 2.0f;
+	// Restore movement speed
+	GetCharacterMovement()->MaxWalkSpeed *= 2.0f;
+}
+
+#pragma endregion 

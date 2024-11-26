@@ -9,13 +9,14 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "PlayerCharacter.generated.h"
 
 class UEnhancedInputComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UCharacterMovementComponent;
-
+class UCapsuleComponent;
 UCLASS()
 class PROJECTMOVEITUNREAL_API APlayerCharacter : public ACharacter
 {
@@ -32,11 +33,13 @@ public:
 	void MoveRight(const FInputActionValue& Value);
 	void Jump(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
-	void Crouch(const FInputActionValue& Value);
+	void CrouchAction(const FInputActionValue& Value);
+
 protected:
 	virtual void BeginPlay() override;
 private:
-	void ResetCameraPosition();
+	virtual void Crouch(bool bClientSimulation = false) override;
+	virtual void UnCrouch(bool bClientSimulation = false) override;
 //variables
 public:
 //input assets
@@ -56,8 +59,6 @@ public:
 //actor components
 	UPROPERTY(EditAnywhere)
 	UCameraComponent* Camera;
-	UPROPERTY(EditAnywhere)
-	USpringArmComponent* SpringArm;
 	//actor component variables
 	UPROPERTY(EditAnywhere, Category = "Component Values")
 	float SpringArmHeight = 60.0f;
@@ -69,9 +70,16 @@ public:
 	float CameraResetLerpTime = 0.5f;
 
 //player variables
-	UPROPERTY(EditAnywhere, Category = "Player Variables")
+	UPROPERTY(EditAnywhere, Category = "Player Variables/Crouch")
 	bool bIsCrouching = false;
+	UPROPERTY(VisibleAnywhere, Category = "Player Variables/Crouch")
+	FVector EyeOffset;
 protected:
 private:
-	
+	//crouching
+	float TargetCapsuleHalfHeight;
+	float CurrentCapsuleHalfHeight;
+	bool bInterpCrouch;
+	UPROPERTY(EditAnywhere, Category = "Player Variables/Crouch")
+	float CrouchInterpSpeed = 10.0f;
 };
