@@ -61,7 +61,7 @@ public:
 	UCameraComponent* Camera;
 	//actor component variables
 	UPROPERTY(EditAnywhere, Category = "Component Values")
-	float SpringArmHeight = 60.0f;
+	float CameraHeight = 60.0f;
 	UPROPERTY(EditAnywhere, Category = "Component Values")
 	bool bInvertedLook = false;
 	UPROPERTY(VisibleAnywhere, Category = "Component Values")

@@ -12,8 +12,7 @@ APlayerCharacter::APlayerCharacter()
 	Camera->SetupAttachment(RootComponent);
 
 	Camera->bUsePawnControlRotation = true;
-	
-	Camera->SetRelativeLocation(FVector(0.0f, 0.0f, SpringArmHeight));
+	Camera->SetRelativeLocation(FVector(0.0f, 0.0f, CameraHeight));
 }
 
 void APlayerCharacter::BeginPlay()
