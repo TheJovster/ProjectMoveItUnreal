@@ -6,11 +6,15 @@
 #include "GameFramework/Character.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "PlayerCharacter.generated.h"
 
 class UEnhancedInputComponent;
 class USpringArmComponent;
 class UCameraComponent;
+class UCharacterMovementComponent;
 
 UCLASS()
 class PROJECTMOVEITUNREAL_API APlayerCharacter : public ACharacter
@@ -28,10 +32,11 @@ public:
 	void MoveRight(const FInputActionValue& Value);
 	void Jump(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
+	void Crouch(const FInputActionValue& Value);
 protected:
 	virtual void BeginPlay() override;
 private:
-
+	void ResetCameraPosition();
 //variables
 public:
 //input assets
@@ -43,6 +48,8 @@ public:
 	UInputAction* LookInput;
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* JumpInput;
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* CrouchInput;
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputMappingContext* InputContext;
 
@@ -56,6 +63,15 @@ public:
 	float SpringArmHeight = 60.0f;
 	UPROPERTY(EditAnywhere, Category = "Component Values")
 	bool bInvertedLook = false;
+	UPROPERTY(VisibleAnywhere, Category = "Component Values")
+	FVector OriginalCameraPosition;
+	UPROPERTY(EditAnywhere, Category = "Component Values")
+	float CameraResetLerpTime = 0.5f;
+
+//player variables
+	UPROPERTY(EditAnywhere, Category = "Player Variables")
+	bool bIsCrouching = false;
 protected:
 private:
+	
 };

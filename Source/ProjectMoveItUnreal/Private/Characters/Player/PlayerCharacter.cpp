@@ -3,8 +3,7 @@
 
 #include "Characters/Player/PlayerCharacter.h"
 
-#include "Camera/CameraComponent.h"
-#include "GameFramework/SpringArmComponent.h"
+
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -53,7 +52,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(MoveRightInput, ETriggerEvent::Triggered, this, &APlayerCharacter::MoveRight);
 		EnhancedInputComponent->BindAction(LookInput, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
 		EnhancedInputComponent->BindAction(JumpInput, ETriggerEvent::Triggered, this, &APlayerCharacter::Jump);
-		
+		EnhancedInputComponent->BindAction(CrouchInput, ETriggerEvent::Triggered, this, &APlayerCharacter::Crouch);
 	}
 }
 
@@ -99,9 +98,33 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
 	}
 	else if(!bInvertedLook)
 	{
-		AddControllerYawInput(-InputVector.X);
-		AddControllerPitchInput(InputVector.Y);
+		AddControllerYawInput(InputVector.X);
+		AddControllerPitchInput(-InputVector.Y);
 	}
-
 }
 
+void APlayerCharacter::Crouch(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Trying to Crouch"));
+	bIsCrouching = !bIsCrouching;
+	if(bIsCrouching)
+	{
+		GetCharacterMovement()->bWantsToCrouch = true;
+		GetCharacterMovement()->Crouch();
+		ResetCameraPosition();
+		UE_LOG(LogTemp, Warning, TEXT("Crouched"));
+	}
+	else if(!bIsCrouching)
+	{
+		GetCharacterMovement()->bWantsToCrouch = false;
+		GetCharacterMovement()->UnCrouch();
+		ResetCameraPosition();
+		UE_LOG(LogTemp, Warning, TEXT("Stood up"));
+	}
+}
+
+void APlayerCharacter::ResetCameraPosition()
+{
+	FVector NewCameraPosition = FMath::Lerp(Camera->GetRelativeLocation(), OriginalCameraPosition, CameraResetLerpTime);
+	Camera->SetRelativeLocation(NewCameraPosition);
+}
