@@ -27,6 +27,7 @@ void APlayerCharacter::BeginPlay()
 		}
 	}
 	OriginalCameraPosition = Camera->GetRelativeLocation();
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 }
 
 
@@ -71,6 +72,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(LookInput, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
 		EnhancedInputComponent->BindAction(JumpInput, ETriggerEvent::Triggered, this, &APlayerCharacter::Jump);
 		EnhancedInputComponent->BindAction(CrouchInput, ETriggerEvent::Triggered, this, &APlayerCharacter::CrouchAction);
+		EnhancedInputComponent->BindAction(SprintInput, ETriggerEvent::Started, this, &APlayerCharacter::SprintStarted);
+		EnhancedInputComponent->BindAction(SprintInput, ETriggerEvent::Completed, this, &APlayerCharacter::SprintFinished);
 	}
 }
 
@@ -155,4 +158,19 @@ void APlayerCharacter::UnCrouch(bool bClientSimulation)
 	GetCharacterMovement()->MaxWalkSpeed *= 2.0f;
 }
 
+#pragma endregion
+#pragma region Sprinting
+void APlayerCharacter::SprintStarted(const FInputActionValue& Value)
+{
+	bIsSprinting = true;
+	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+	UE_LOG(LogTemp, Warning, TEXT("Sprinting"));
+}
+
+void APlayerCharacter::SprintFinished(const FInputActionValue& Value)
+{
+	bIsSprinting = false;
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+	UE_LOG(LogTemp, Warning, TEXT("Stopped Sprinting"));
+}
 #pragma endregion 

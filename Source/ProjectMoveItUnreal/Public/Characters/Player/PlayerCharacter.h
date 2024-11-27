@@ -34,7 +34,8 @@ public:
 	void Jump(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void CrouchAction(const FInputActionValue& Value);
-
+	void SprintStarted(const FInputActionValue& Value);
+	void SprintFinished(const FInputActionValue& Value);
 protected:
 	virtual void BeginPlay() override;
 private:
@@ -53,6 +54,8 @@ public:
 	UInputAction* JumpInput;
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* CrouchInput;
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* SprintInput;
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputMappingContext* InputContext;
 
@@ -74,6 +77,12 @@ public:
 	bool bIsCrouching = false;
 	UPROPERTY(VisibleAnywhere, Category = "Player Variables/Crouch")
 	FVector EyeOffset;
+	bool bIsSprinting = false;
+
+	UPROPERTY(EditAnywhere, Category = "Player Variables/Movement")
+	float WalkSpeed = 300.0f;
+	UPROPERTY(EditAnywhere, Category = "Player Variables/Movement")
+	float SprintSpeed = 600.0f;
 protected:
 private:
 	//crouching
