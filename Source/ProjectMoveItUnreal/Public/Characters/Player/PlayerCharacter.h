@@ -10,6 +10,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Weapons/WeaponBase.h"
+#include "Weapons/WeaponInventory.h"
 #include "PlayerCharacter.generated.h"
 
 class UEnhancedInputComponent;
@@ -17,6 +19,9 @@ class USpringArmComponent;
 class UCameraComponent;
 class UCharacterMovementComponent;
 class UCapsuleComponent;
+class AWeaponBase;
+class UWeaponInventory;
+
 UCLASS()
 class PROJECTMOVEITUNREAL_API APlayerCharacter : public ACharacter
 {
@@ -71,6 +76,8 @@ public:
 	FVector OriginalCameraPosition;
 	UPROPERTY(EditAnywhere, Category = "Component Values")
 	float CameraResetLerpTime = 0.5f;
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UWeaponInventory* WeaponInventory;
 
 //player variables
 	UPROPERTY(EditAnywhere, Category = "Player Variables/Crouch")
