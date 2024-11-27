@@ -32,3 +32,14 @@ void UWeaponInventory::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	// ...
 }
 
+void UWeaponInventory::AddWeapon(AWeaponBase* WeaponToAdd)
+{
+	Weapons.Add(WeaponToAdd);
+}
+
+UWeaponInventory::AWeaponBase* UWeaponInventory::GetCurrentWeapon() const
+{
+	return CurrentWeapon;
+}
+
+

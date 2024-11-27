@@ -11,9 +11,12 @@ APlayerCharacter::APlayerCharacter()
 	Camera = CreateDefaultSubobject<UCameraComponent>("Camera");
 	Camera->SetupAttachment(RootComponent);
 
+	Camera->SetupAttachment(RootComponent);
 	Camera->bUsePawnControlRotation = true;
 	Camera->SetRelativeLocation(FVector(0.0f, 0.0f, CameraHeight));
-	WeaponInventory->CreateDefaultSubobject<UWeaponInventory>("Weapon Inventory");
+	WeaponInventory = CreateDefaultSubobject<UWeaponInventory>("Weapon Inventory");
+	/*WeaponSocket = CreateDefaultSubobject<USceneComponent>("Weapon Socket");
+	WeaponSocket->SetupAttachment(Camera);*/
 }
 
 void APlayerCharacter::BeginPlay()

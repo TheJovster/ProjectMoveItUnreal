@@ -21,6 +21,7 @@ class UCharacterMovementComponent;
 class UCapsuleComponent;
 class AWeaponBase;
 class UWeaponInventory;
+class UCapsuleComponent;
 
 UCLASS()
 class PROJECTMOVEITUNREAL_API APlayerCharacter : public ACharacter
@@ -78,7 +79,8 @@ public:
 	float CameraResetLerpTime = 0.5f;
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UWeaponInventory* WeaponInventory;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	USceneComponent* WeaponSocket;
 //player variables
 	UPROPERTY(EditAnywhere, Category = "Player Variables/Crouch")
 	bool bIsCrouching = false;

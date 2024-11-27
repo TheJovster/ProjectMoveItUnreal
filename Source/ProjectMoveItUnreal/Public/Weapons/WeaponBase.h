@@ -7,6 +7,7 @@
 #include "WeaponBase.generated.h"
 
 class USceneComponent;
+class AWeaponBase;
 class UStaticMeshComponent;
 
 UCLASS()
