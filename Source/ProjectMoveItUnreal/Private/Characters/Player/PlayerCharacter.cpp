@@ -146,7 +146,8 @@ void APlayerCharacter::Crouch(bool bClientSimulation)
 	bInterpCrouch = true;
 	TargetCapsuleHalfHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight() * 0.5f;
 	// Optional: Reduce movement speed
-	GetCharacterMovement()->MaxWalkSpeed *= 0.5f;
+
+	GetCharacterMovement()->MaxWalkSpeed = CrouchedSpeed;
 }
 
 void APlayerCharacter::UnCrouch(bool bClientSimulation)
@@ -155,22 +156,36 @@ void APlayerCharacter::UnCrouch(bool bClientSimulation)
 	bInterpCrouch = true;
 	TargetCapsuleHalfHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight() * 2.0f;
 	// Restore movement speed
-	GetCharacterMovement()->MaxWalkSpeed *= 2.0f;
+	if(bIsSprinting)
+	{
+		bIsSprinting = false;
+		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+	}
+	else
+	{
+		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+	}
 }
 
 #pragma endregion
 #pragma region Sprinting
 void APlayerCharacter::SprintStarted(const FInputActionValue& Value)
 {
-	bIsSprinting = true;
-	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
-	UE_LOG(LogTemp, Warning, TEXT("Sprinting"));
+	if(!bIsCrouching)
+	{
+		bIsSprinting = true;
+		GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+		UE_LOG(LogTemp, Warning, TEXT("Sprinting"));
+	}
 }
 
 void APlayerCharacter::SprintFinished(const FInputActionValue& Value)
 {
-	bIsSprinting = false;
-	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
-	UE_LOG(LogTemp, Warning, TEXT("Stopped Sprinting"));
+	if(!bIsCrouching)
+	{
+		bIsSprinting = false;
+		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+		UE_LOG(LogTemp, Warning, TEXT("Stopped Sprinting"));
+	}
 }
 #pragma endregion 

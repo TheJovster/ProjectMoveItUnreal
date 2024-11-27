@@ -83,6 +83,8 @@ public:
 	float WalkSpeed = 300.0f;
 	UPROPERTY(EditAnywhere, Category = "Player Variables/Movement")
 	float SprintSpeed = 600.0f;
+	UPROPERTY(EditAnywhere, Category = "Player Variables/Movement")
+	float CrouchedSpeed = 150.0f;
 protected:
 private:
 	//crouching
