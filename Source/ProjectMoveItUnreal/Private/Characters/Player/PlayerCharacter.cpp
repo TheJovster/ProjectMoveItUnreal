@@ -1,9 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Characters/Player/PlayerCharacter.h"
 
-// Sets default values
+// ctor - Sets default values
 APlayerCharacter::APlayerCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -15,10 +13,7 @@ APlayerCharacter::APlayerCharacter()
 	Camera->bUsePawnControlRotation = true;
 	Camera->SetRelativeLocation(FVector(0.0f, 0.0f, CameraHeight));
 	WeaponInventory = CreateDefaultSubobject<UWeaponInventory>("Weapon Inventory");
-	/*WeaponSocket = CreateDefaultSubobject<USceneComponent>("Weapon Socket");
-	WeaponSocket->SetupAttachment(Camera);*/
 }
-
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -33,9 +28,6 @@ void APlayerCharacter::BeginPlay()
 	OriginalCameraPosition = Camera->GetRelativeLocation();
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 }
-
-
-
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -64,8 +56,14 @@ void APlayerCharacter::Tick(float DeltaTime)
 		}
 	}
 
+	if(!GetCharacterMovement()->IsMovingOnGround())
+	{
+		bIsSprinting = false;
+		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+		UE_LOG(LogTemp, Warning, TEXT("Stopped Sprinting"));
+	}
+	
 }
-
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -78,9 +76,10 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(CrouchInput, ETriggerEvent::Triggered, this, &APlayerCharacter::CrouchAction);
 		EnhancedInputComponent->BindAction(SprintInput, ETriggerEvent::Started, this, &APlayerCharacter::SprintStarted);
 		EnhancedInputComponent->BindAction(SprintInput, ETriggerEvent::Completed, this, &APlayerCharacter::SprintFinished);
+		EnhancedInputComponent->BindAction(FireInput, ETriggerEvent::Triggered, this, &APlayerCharacter::Fire);
 	}
 }
-
+#pragma region BasicMovement
 void APlayerCharacter::MoveForward(const FInputActionValue& Value)
 {
 	if(Controller != nullptr)
@@ -127,6 +126,7 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
 		AddControllerPitchInput(-InputVector.Y);
 	}
 }
+#pragma endregion  
 #pragma region  Crouching
 
 void APlayerCharacter::CrouchAction(const FInputActionValue& Value)
@@ -170,12 +170,11 @@ void APlayerCharacter::UnCrouch(bool bClientSimulation)
 		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 	}
 }
-
 #pragma endregion
 #pragma region Sprinting
 void APlayerCharacter::SprintStarted(const FInputActionValue& Value)
 {
-	if(!bIsCrouching)
+	if(!bIsCrouching && GetCharacterMovement()->IsMovingOnGround())
 	{
 		bIsSprinting = true;
 		GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
@@ -185,7 +184,7 @@ void APlayerCharacter::SprintStarted(const FInputActionValue& Value)
 
 void APlayerCharacter::SprintFinished(const FInputActionValue& Value)
 {
-	if(!bIsCrouching)
+	if(!bIsCrouching && GetCharacterMovement()->IsMovingOnGround())
 	{
 		bIsSprinting = false;
 		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
@@ -193,3 +192,10 @@ void APlayerCharacter::SprintFinished(const FInputActionValue& Value)
 	}
 }
 #pragma endregion 
+#pragma region Firing
+void APlayerCharacter::Fire(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Firing Gun from PlayerCharacter"));
+	WeaponInventory->GetCurrentWeapon()->Fire();
+}
+#pragma endregion Firing

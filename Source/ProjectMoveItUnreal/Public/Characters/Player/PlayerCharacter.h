@@ -10,8 +10,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "Weapons/WeaponBase.h"
 #include "Weapons/WeaponInventory.h"
+#include "Weapons/WeaponBase.h"
 #include "PlayerCharacter.generated.h"
 
 class UEnhancedInputComponent;
@@ -42,6 +42,7 @@ public:
 	void CrouchAction(const FInputActionValue& Value);
 	void SprintStarted(const FInputActionValue& Value);
 	void SprintFinished(const FInputActionValue& Value);
+	void Fire(const FInputActionValue& Value);
 protected:
 	virtual void BeginPlay() override;
 private:
@@ -62,6 +63,8 @@ public:
 	UInputAction* CrouchInput;
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* SprintInput;
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* FireInput;
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputMappingContext* InputContext;
 

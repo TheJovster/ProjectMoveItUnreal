@@ -7,10 +7,8 @@
 AWeaponBase::AWeaponBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
-	MuzzleLocation = CreateDefaultSubobject<USceneComponent>("Muzzle");
 	WeaponStaticMesh = CreateDefaultSubobject<UStaticMeshComponent>("WeaponModel");
-	MuzzleLocation->SetupAttachment(WeaponStaticMesh);
+	SetRootComponent(WeaponStaticMesh);
 }
 
 void AWeaponBase::BeginPlay()
@@ -26,6 +24,6 @@ void AWeaponBase::Tick(float DeltaTime)
 
 void AWeaponBase::Fire()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Fired"));
+	UE_LOG(LogTemp, Warning, TEXT("Fired from the weapon"));
 }
 

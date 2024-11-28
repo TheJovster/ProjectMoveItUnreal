@@ -7,8 +7,8 @@
 #include "WeaponBase.generated.h"
 
 class USceneComponent;
-class AWeaponBase;
 class UStaticMeshComponent;
+
 
 UCLASS()
 class PROJECTMOVEITUNREAL_API AWeaponBase : public AActor
@@ -20,7 +20,7 @@ class PROJECTMOVEITUNREAL_API AWeaponBase : public AActor
 public:
 	AWeaponBase();
 	virtual void Tick(float DeltaTime) override;
-	void Fire();
+	static void Fire();
 protected:
 	virtual void BeginPlay() override;
 private:
@@ -33,9 +33,6 @@ private:
 public:
 private:
 protected:
-	UPROPERTY(EditAnywhere, Category = "Weapon")
-	USceneComponent* MuzzleLocation;
-	
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	int Damage;
 	UPROPERTY(EditAnywhere,Category="Weapon")

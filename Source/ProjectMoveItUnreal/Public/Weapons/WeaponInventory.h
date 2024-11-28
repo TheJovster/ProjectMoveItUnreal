@@ -7,14 +7,13 @@
 #include "WeaponBase.h"
 #include "WeaponInventory.generated.h"
 
+class AWeaponBase;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTMOVEITUNREAL_API UWeaponInventory : public UActorComponent
 {
 	GENERATED_BODY()
 
-class AWeaponBase;
-	
 #pragma region Methods
 	//methods
 public:	
@@ -22,7 +21,7 @@ public:
 	UWeaponInventory();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void AddWeapon(AWeaponBase* WeaponToAdd);
-	AWeaponBase* GetCurrentWeapon() const;
+	AWeaponBase* GetCurrentWeapon() {return CurrentWeapon;}
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -34,10 +33,12 @@ private:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	TArray<AWeaponBase*> Weapons;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
-	AWeaponBase* CurrentWeapon;
+
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
+	AWeaponBase* CurrentWeapon;
 private:
+	
 #pragma endregion 
 		
 };

@@ -18,9 +18,6 @@ UWeaponInventory::UWeaponInventory()
 void UWeaponInventory::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
-	
 }
 
 
@@ -37,9 +34,5 @@ void UWeaponInventory::AddWeapon(AWeaponBase* WeaponToAdd)
 	Weapons.Add(WeaponToAdd);
 }
 
-UWeaponInventory::AWeaponBase* UWeaponInventory::GetCurrentWeapon() const
-{
-	return CurrentWeapon;
-}
 
 
