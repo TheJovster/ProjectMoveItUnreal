@@ -33,7 +33,8 @@ private:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	TArray<AWeaponBase*> Weapons;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	int CurrentWeaponIndex = 0; //0 by default
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
 	AWeaponBase* CurrentWeapon;

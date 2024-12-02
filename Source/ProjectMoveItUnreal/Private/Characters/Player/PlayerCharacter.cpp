@@ -28,33 +28,14 @@ void APlayerCharacter::BeginPlay()
 	OriginalCameraPosition = Camera->GetRelativeLocation();
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 }
+
+
+
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	//how performant is this?
-	if (bInterpCrouch)
-	{
-		// Current height
-		float CurrentHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
-        
-		// Interpolate height
-		float NewHeight = FMath::FInterpTo(
-			CurrentHeight, 
-			TargetCapsuleHalfHeight, 
-			DeltaTime, 
-			CrouchInterpSpeed
-		);
-
-		// Update capsule height
-		GetCapsuleComponent()->SetCapsuleHalfHeight(NewHeight);
-
-		// Check if we've reached the target height
-		if (FMath::IsNearlyEqual(NewHeight, TargetCapsuleHalfHeight, 1.0f))
-		{
-			bInterpCrouch = false;
-		}
-	}
+	
+	RecalculateCameraHeight(DeltaTime);
 
 	if(!GetCharacterMovement()->IsMovingOnGround())
 	{
@@ -128,7 +109,6 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
 }
 #pragma endregion  
 #pragma region  Crouching
-
 void APlayerCharacter::CrouchAction(const FInputActionValue& Value)
 {
 	bIsCrouching = !bIsCrouching;
@@ -168,6 +148,32 @@ void APlayerCharacter::UnCrouch(bool bClientSimulation)
 	else
 	{
 		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+	}
+}
+
+void APlayerCharacter::RecalculateCameraHeight(float DeltaTime)
+{
+	if (bInterpCrouch)
+	{
+		// Current height
+		float CurrentHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+        
+		// Interpolate height
+		float NewHeight = FMath::FInterpTo(
+			CurrentHeight, 
+			TargetCapsuleHalfHeight, 
+			DeltaTime, 
+			CrouchInterpSpeed
+		);
+
+		// Update capsule height
+		GetCapsuleComponent()->SetCapsuleHalfHeight(NewHeight);
+
+		// Check if target height is reached
+		if (FMath::IsNearlyEqual(NewHeight, TargetCapsuleHalfHeight, 1.0f))
+		{
+			bInterpCrouch = false;
+		}
 	}
 }
 #pragma endregion

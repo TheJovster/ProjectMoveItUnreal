@@ -45,6 +45,8 @@ public:
 	void Fire(const FInputActionValue& Value);
 protected:
 	virtual void BeginPlay() override;
+	void RecalculateCameraHeight(float DeltaTime);
+
 private:
 	virtual void Crouch(bool bClientSimulation = false) override;
 	virtual void UnCrouch(bool bClientSimulation = false) override;

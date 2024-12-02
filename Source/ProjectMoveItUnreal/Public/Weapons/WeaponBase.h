@@ -3,12 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ProjectileBase.h"
 #include "GameFramework/Actor.h"
 #include "WeaponBase.generated.h"
 
 class USceneComponent;
 class UStaticMeshComponent;
-
+class AProjectileBase;
 
 UCLASS()
 class PROJECTMOVEITUNREAL_API AWeaponBase : public AActor
@@ -31,6 +32,8 @@ private:
 #pragma region Variables	
 //variables
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	AProjectileBase* Projectile;
 private:
 protected:
 	UPROPERTY(EditAnywhere, Category = "Weapon")
