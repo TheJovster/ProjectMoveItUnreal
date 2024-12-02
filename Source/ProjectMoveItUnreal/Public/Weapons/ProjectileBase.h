@@ -3,12 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/SphereComponent.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "ProjectileBase.generated.h"
 
 class UProjectileMovementComponent;
 class UStaticMeshComponent;
+class USphereComponent;
 
 UCLASS()
 class PROJECTMOVEITUNREAL_API AProjectileBase : public AActor
@@ -20,19 +22,23 @@ public:
 	AProjectileBase();
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION()
+	void FireAtDirection(const FVector& Direction);
 protected:
 	virtual void BeginPlay() override;
 private:	
 #pragma endregion Methods
 #pragma region Variables
 public:
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UProjectileMovementComponent* ProjectileMovementComponent;
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* StaticMeshComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USphereComponent* CollisionComponent;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile Variables")
-	float ProjectileStartVelocity = 300.f;
+	float ProjectileStartVelocity = 3000.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile Variables")
 	float ProjectileEndVelocity = 3000.f;
 
